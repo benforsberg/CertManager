@@ -1,8 +1,9 @@
 package com.benforsberg.certmanager.User;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.benforsberg.certmanager.Cert.Cert;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -15,18 +16,41 @@ public class User {
     private String phoneNum;
     private String pin;
 
+    @OneToMany(mappedBy = "certOwner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Cert> userCerts;
+
+    public Set<Cert> getUserCerts() {
+        return userCerts;
+    }
+
+    public void addUserCert(Cert cert) {
+        userCerts.add(cert);
+    }
+
+    public void deleteUserCert(Cert cert) {
+        userCerts.remove(cert);
+    }
+
+    public void setUserCerts(Set<Cert> userCerts) {
+        this.userCerts = userCerts;
+    }
+
     public User() {
         super();
     }
 
-    public User(Long id, String firstName, String lastName, String tags, String phoneNum, String pin) {
-        this.id = id;
+    public User( String firstName, String lastName, String tags, String phoneNum, String pin) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.tags = tags;
         this.phoneNum = phoneNum;
         this.pin = pin;
     }
+
+    public Set<Cert> printAllUserCerts(){
+        return this.userCerts;
+    }
+
 
     public Long getId() {
         return id;

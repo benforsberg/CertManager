@@ -1,8 +1,8 @@
 package com.benforsberg.certmanager.Cert;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.benforsberg.certmanager.User.User;
+
+import javax.persistence.*;
 
 @Entity
 public class Cert {
@@ -12,7 +12,6 @@ public class Cert {
     //@Column(name="id")
     private Long id;
     //Set to ID of person who owns cert
-    private String certOwner;
     private String certExpiration;
     private String certIssuer;
     private String certType;
@@ -21,9 +20,19 @@ public class Cert {
     private String certLength;
     private boolean certIsExpired;
 
-    public Cert(Long id, String certOwner, String certExpiration, String certIssuer, String certType, String certDescription, String certCode, String certLength, boolean certIsExpired) {
-        this.id = id;
-        this.certOwner = certOwner;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cert_user_id")
+    private User certOwner;
+
+    public User getCertOwner() {
+        return certOwner;
+    }
+
+    public void setCertOwner(User user) {
+        this.certOwner = user;
+    }
+
+    public Cert( String certExpiration, String certIssuer, String certType, String certDescription, String certCode, String certLength, boolean certIsExpired, User certOwner) {
         this.certExpiration = certExpiration;
         this.certIssuer = certIssuer;
         this.certType = certType;
@@ -31,11 +40,10 @@ public class Cert {
         this.certCode = certCode;
         this.certLength = certLength;
         this.certIsExpired = certIsExpired;
+        this.certOwner = certOwner;
     }
 
     public Cert() {
-        this.id = 15l;
-        this.certOwner = "Ben Forsberg";
         this.certExpiration = "October 12, 2021";
         this.certIssuer = "American Red Cross";
         this.certType = "Instructor";
@@ -43,6 +51,7 @@ public class Cert {
         this.certCode = "GT4FB3";
         this.certLength = "2 Years";
         this.certIsExpired = false;
+        this.certOwner = null;
     }
 
     public Long getId() {
@@ -51,14 +60,6 @@ public class Cert {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getCertOwner() {
-        return certOwner;
-    }
-
-    public void setCertOwner(String shiftOwner) {
-        this.certOwner = shiftOwner;
     }
 
     public String getCertExpiration() {
@@ -124,5 +125,9 @@ public class Cert {
 
     public void setCertIsExpired(String shiftRole) {
         this.certIsExpired = certIsExpired;
+    }
+
+    public String toString(){
+        return "Certcode: " + this.certCode + " | Owner: " + this.certOwner.getFirstName() + " " + this.certOwner.getLastName() + " | Issuer: " + certIssuer + " | Type: " + certType ;
     }
 }
