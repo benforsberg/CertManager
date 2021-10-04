@@ -8,5 +8,4 @@ import java.util.List;
 
 @Repository
 public interface CertRepository extends JpaRepository<Cert,Long> {
-    List<Cert> findByOwner(User certOwner);
 }
