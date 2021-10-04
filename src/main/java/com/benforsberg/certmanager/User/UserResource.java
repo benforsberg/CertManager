@@ -28,14 +28,14 @@ public class UserResource {
 
 
 
-    @GetMapping("/")
+    /*@GetMapping("/")
     public String greeting() {
         return "<center><h1>Hello! Welcome to Ben's spring boot application!</h1></center>";
     }
     @GetMapping("/home")
     public String greetingHome() {
         return greeting  + retrieveAllUsers().get(0).getFirstName() +  " " + retrieveAllUsers().get(0).getLastName() + "!";
-    }
+    }*/
 
     @GetMapping("/private")
     public String privateMessage() {
