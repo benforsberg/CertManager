@@ -24,39 +24,26 @@ public class UserResource {
     public String greeting = "Welcome ";
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
 
-
-    /*@GetMapping("/")
+    @GetMapping("/")
     public String greeting() {
         return "<center><h1>Hello! Welcome to Ben's spring boot application!</h1></center>";
     }
     @GetMapping("/home")
     public String greetingHome() {
         return greeting  + retrieveAllUsers().get(0).getFirstName() +  " " + retrieveAllUsers().get(0).getLastName() + "!";
-    }*/
+    }
 
     @GetMapping("/private")
     public String privateMessage() {
         return "Heyyy you're on a private page!";
     }
 
-    @GetMapping("/test1")
-    public String Test1() {
-        String output = "";
-
-        for (int i=0;i<2;i++){
-            Cert tmpcert = new Cert("Tomorrow", "City of Temecula", "LGI", "LG Instructor", "3fg44", "2 Years", false, retrieveAllUsers().get(i));
-            retrieveAllUsers().get(i).addUserCert(tmpcert);
-            output += "\n" + printUserCerts(retrieveAllUsers().get(i));
-        }
-
-        return output;
-    }
 
     public String printUserCerts(User user){
-        return user.getFirstName() + " "+ user.getLastName() + "'s certs: " + user.getUserCerts().toString() + "\n";
+        return user.getFirstName() + " " + user.getLastName() + "'s certs: " + "\n";
     }
 
 
@@ -74,17 +61,6 @@ public class UserResource {
             throw new UserNotFoundException("id-" + id);
 
         return user.get();
-    }
-
-    //View all certs for a particular user
-    @GetMapping("/users/{id}/certs")
-    public Set<Cert> retrieveUserCerts(@PathVariable long id) {
-        Optional<User> user = userRepository.findById(id);
-
-        if (!user.isPresent())
-            throw new UserNotFoundException("id-" + id);
-
-        return user.get().printAllUserCerts();
     }
 
     @DeleteMapping("/users/{id}")
