@@ -21,19 +21,21 @@ public class User implements Serializable {
             cascade = CascadeType.ALL)
     private Set<Cert> certs;
 
-
+//Set<Cert> certs
     public User() {
+        //this.certs = certs;
         this.firstName = "John";
         this.lastName = "Doe";
         this.email = "john@doe.com";
         this.isAdmin = false;
     }
 
-    public User(String firstName, String lastName, String email, boolean isAdmin) {
+    public User(String firstName, String lastName, String email, boolean isAdmin, Set<Cert> certs) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.isAdmin = isAdmin;
+        this.certs = certs;
     }
 
 
@@ -69,12 +71,20 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public boolean isAdmin() {
+    public boolean getIsAdmin() {
         return isAdmin;
     }
 
     public void setIsAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
+    }
+
+    public Set<Cert> getCerts() {
+        return certs;
+    }
+
+    public void setCerts(Set<Cert> certs) {
+        this.certs = certs;
     }
 
     @Override

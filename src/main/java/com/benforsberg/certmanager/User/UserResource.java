@@ -63,6 +63,17 @@ public class UserResource {
         return user.get();
     }
 
+//    //Get certs for a user
+//    @GetMapping("/users/{id}/certs")
+//    public Set<Cert> retrieveUserCerts(@PathVariable long id) {
+//        Optional<User> user = userRepository.findById(id);
+//        Set<Cert> certs = user.get().getCerts();
+//        if (!user.isPresent())
+//            throw new UserNotFoundException("id-" + id);
+//
+//        return certs;
+//    }
+
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable long id) {
         userRepository.deleteById(id);
