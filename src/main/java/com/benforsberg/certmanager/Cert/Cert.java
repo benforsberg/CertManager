@@ -45,7 +45,6 @@ public class Cert implements Serializable {
         this.certCode = "GT4FB3";
         this.certLength = "2 Years";
         this.isExpired = false;
-        this.user = new User();
     }
 
     public Long getId() {

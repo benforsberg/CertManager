@@ -23,6 +23,7 @@ public class CertResource {
         return certRepository.findAll();
     }
 
+
     @GetMapping("/certs/{id}")
     public Cert retrieveCert(@PathVariable long id) {
         Optional<Cert> Cert = certRepository.findById(id);
