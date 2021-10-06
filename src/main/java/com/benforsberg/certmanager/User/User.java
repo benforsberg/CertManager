@@ -30,12 +30,11 @@ public class User implements Serializable {
         this.isAdmin = false;
     }
 
-    public User(String firstName, String lastName, String email, boolean isAdmin, Set<Cert> certs) {
+    public User(String firstName, String lastName, String email, boolean isAdmin) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.isAdmin = isAdmin;
-        this.certs = certs;
     }
 
 

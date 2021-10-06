@@ -107,8 +107,8 @@ public class Cert implements Serializable {
         return isExpired;
     }
 
-    public void setIsExpired(boolean certIsExpired) {
-        this.isExpired = certIsExpired;
+    public void setIsExpired(boolean isExpired) {
+        this.isExpired = isExpired;
     }
 
 
