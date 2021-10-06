@@ -47,7 +47,7 @@ public class UserResource {
         String output = "";
 
         for (int i=0;i<2;i++){
-            Cert tmpcert = new Cert("Tomorrow", "City of Temecula", "LGI", "LG Instructor", "3fg44", "2 Years", false, retrieveAllUsers().get(i));
+            Cert tmpcert = new Cert("Tomorrow", "City of Temecula", "LGI", "LG Instructor", "3fg44", "2 Years", false);
             retrieveAllUsers().get(i).addUserCert(tmpcert);
             output += "\n" + printUserCerts(retrieveAllUsers().get(i));
         }

@@ -1,6 +1,8 @@
 package com.benforsberg.certmanager.User;
 
 import com.benforsberg.certmanager.Cert.Cert;
+import com.benforsberg.certmanager.CertRegistration.CertRegistration;
+import com.benforsberg.certmanager.CertRegistration.UserCertJoinTable;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -16,8 +18,16 @@ public class User {
     private String phoneNum;
     private String pin;
 
-    @OneToMany(mappedBy = "certOwner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Cert> userCerts;
+    @ManyToMany
+    @JoinTable(name="user_certs",joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = " cert_id"))
+    Set<Cert> userCerts;
+
+    @OneToMany(mappedBy = "user")
+    Set<CertRegistration> certRegistrations;
+
+    @OneToMany(mappedBy = "user")
+    Set<UserCertJoinTable> userCertJoinTables;
+
 
     public Set<Cert> getUserCerts() {
         return userCerts;

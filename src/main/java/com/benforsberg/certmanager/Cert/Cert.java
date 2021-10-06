@@ -1,8 +1,11 @@
 package com.benforsberg.certmanager.Cert;
 
+import com.benforsberg.certmanager.CertRegistration.CertRegistration;
+import com.benforsberg.certmanager.CertRegistration.UserCertJoinTable;
 import com.benforsberg.certmanager.User.User;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Cert {
@@ -20,19 +23,16 @@ public class Cert {
     private String certLength;
     private boolean certIsExpired;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cert_user_id")
-    private User certOwner;
+    @ManyToMany(mappedBy = "userCerts")
+    Set<User> certOwner;
 
-    public User getCertOwner() {
-        return certOwner;
-    }
+    @OneToMany(mappedBy = "cert")
+    Set<CertRegistration> certRegistrations;
 
-    public void setCertOwner(User user) {
-        this.certOwner = user;
-    }
+    @OneToMany(mappedBy = "cert")
+    Set<UserCertJoinTable> userCertJoinTables;
 
-    public Cert( String certExpiration, String certIssuer, String certType, String certDescription, String certCode, String certLength, boolean certIsExpired, User certOwner) {
+    public Cert( String certExpiration, String certIssuer, String certType, String certDescription, String certCode, String certLength, boolean certIsExpired) {
         this.certExpiration = certExpiration;
         this.certIssuer = certIssuer;
         this.certType = certType;
@@ -40,7 +40,6 @@ public class Cert {
         this.certCode = certCode;
         this.certLength = certLength;
         this.certIsExpired = certIsExpired;
-        this.certOwner = certOwner;
     }
 
     public Cert() {
@@ -128,6 +127,6 @@ public class Cert {
     }
 
     public String toString(){
-        return "Certcode: " + this.certCode + " | Owner: " + this.certOwner.getFirstName() + " " + this.certOwner.getLastName() + " | Issuer: " + certIssuer + " | Type: " + certType ;
+        return "Certcode: " + this.certCode + " | Owner: "  + this.certOwner + " | Issuer: " + this.certIssuer + " | Type: " + this.certType + " | Description: " + this.certDescription + " ||| ";
     }
 }
