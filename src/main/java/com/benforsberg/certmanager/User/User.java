@@ -4,6 +4,7 @@ import com.benforsberg.certmanager.Cert.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -28,6 +29,7 @@ public class User implements Serializable {
         this.lastName = "Doe";
         this.email = "john@doe.com";
         this.isAdmin = false;
+
     }
 
     public User(String firstName, String lastName, String email, boolean isAdmin) {
@@ -84,6 +86,19 @@ public class User implements Serializable {
 
     public void setCerts(Set<Cert> certs) {
         this.certs = certs;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return isAdmin == user.isAdmin && getId().equals(user.getId()) && getFirstName().equals(user.getFirstName()) && getLastName().equals(user.getLastName()) && getEmail().equals(user.getEmail()) && Objects.equals(getCerts(), user.getCerts());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getFirstName(), getLastName(), getEmail(), isAdmin, getCerts());
     }
 
     @Override

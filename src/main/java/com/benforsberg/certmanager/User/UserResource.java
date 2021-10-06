@@ -31,9 +31,38 @@ public class UserResource {
     public String greeting() {
         return "<center><h1>Hello! Welcome to Ben's spring boot application!</h1></center>";
     }
-    @GetMapping("/home")
+
+
+    @GetMapping({"/dashboard", "/dashboard/"})
     public String greetingHome() {
-        return greeting  + retrieveAllUsers().get(0).getFirstName() +  " " + retrieveAllUsers().get(0).getLastName() + "!";
+        //Track num users and num certs in system.
+        int numUsers = userRepository.findAll().size();
+        int numCerts = 0;
+        for (int i = 0; i < numUsers; i++) {
+            numCerts += userRepository.findAll().get(i).getCerts().size();
+        }
+
+        String output = "";
+        output = "There are currently " + numUsers + " users and " + numCerts + " tracked certifications in the system.";
+        return output;
+    }
+
+    //Mapp multiple endpoints to one method
+    @GetMapping({"/home/{id}", "/dashboard/{id}"})
+    public String greetingHomeUser(@PathVariable long id) {
+        String output = "";
+        Optional<User> user = userRepository.findById(id);
+        boolean isAdmin = user.get().getIsAdmin();
+        output = "Welcome " + user.get().getFirstName() + " " + user.get().getLastName() + "! You currently have " + user.get().getCerts().size();
+
+        if (user.get().getCerts().size() == 1)
+            output = output + " cert saved.";
+        else output = output + " certs saved.";
+
+        if (isAdmin)
+            output = output + "\nYou are currently logged in as an admin.";
+        else output = output + "\nYou are currently logged in as a standard user.";
+        return output;
     }
 
     @GetMapping("/private")
@@ -42,7 +71,7 @@ public class UserResource {
     }
 
 
-    public String printUserCerts(User user){
+    public String printUserCerts(User user) {
         return user.getFirstName() + " " + user.getLastName() + "'s certs: " + "\n";
     }
 

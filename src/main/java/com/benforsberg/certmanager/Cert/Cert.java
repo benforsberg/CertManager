@@ -112,14 +112,6 @@ public class Cert implements Serializable {
     }
 
 
-    public boolean getCertIsExpired() {
-        return this.isExpired;
-    }
-
-    public void setCertIsExpired(boolean isExpired) {
-        this.isExpired = isExpired;
-    }
-
     @Override
     public String toString() {
         return "Cert{" +
