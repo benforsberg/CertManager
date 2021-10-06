@@ -1,18 +1,17 @@
 package com.benforsberg.certmanager.Cert;
 
-import com.benforsberg.certmanager.CertRegistration.CertRegistration;
-import com.benforsberg.certmanager.CertRegistration.UserCertJoinTable;
+
 import com.benforsberg.certmanager.User.User;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.io.Serializable;
 
 @Entity
-public class Cert {
+@Table(name = "certs")
+public class Cert implements Serializable {
 
     @Id
     @GeneratedValue
-    //@Column(name="id")
     private Long id;
     //Set to ID of person who owns cert
     private String certExpiration;
@@ -21,25 +20,21 @@ public class Cert {
     private String certDescription;
     private String certCode;
     private String certLength;
-    private boolean certIsExpired;
+    private boolean isExpired;
 
-    @ManyToMany(mappedBy = "userCerts")
-    Set<User> certOwner;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @OneToMany(mappedBy = "cert")
-    Set<CertRegistration> certRegistrations;
-
-    @OneToMany(mappedBy = "cert")
-    Set<UserCertJoinTable> userCertJoinTables;
-
-    public Cert( String certExpiration, String certIssuer, String certType, String certDescription, String certCode, String certLength, boolean certIsExpired) {
+    public Cert(String certExpiration, String certIssuer, String certType, String certDescription, String certCode, String certLength, boolean isExpired, User user) {
         this.certExpiration = certExpiration;
         this.certIssuer = certIssuer;
         this.certType = certType;
         this.certDescription = certDescription;
         this.certCode = certCode;
         this.certLength = certLength;
-        this.certIsExpired = certIsExpired;
+        this.isExpired = isExpired;
+        this.user = user;
     }
 
     public Cert() {
@@ -49,8 +44,8 @@ public class Cert {
         this.certDescription = "Lifeguard Instructor";
         this.certCode = "GT4FB3";
         this.certLength = "2 Years";
-        this.certIsExpired = false;
-        this.certOwner = null;
+        this.isExpired = false;
+        this.user = new User();
     }
 
     public Long getId() {
@@ -109,24 +104,35 @@ public class Cert {
         this.certLength = certLength;
     }
 
-    public boolean isCertIsExpired() {
-        return certIsExpired;
+    public boolean isIsExpired() {
+        return isExpired;
     }
 
-    public void setCertIsExpired(boolean certIsExpired) {
-        this.certIsExpired = certIsExpired;
+    public void setIsExpired(boolean certIsExpired) {
+        this.isExpired = certIsExpired;
     }
 
 
     public boolean getCertIsExpired() {
-        return this.certIsExpired;
+        return this.isExpired;
     }
 
-    public void setCertIsExpired(String shiftRole) {
-        this.certIsExpired = certIsExpired;
+    public void setCertIsExpired(boolean isExpired) {
+        this.isExpired = isExpired;
     }
 
-    public String toString(){
-        return "Certcode: " + this.certCode + " | Owner: "  + this.certOwner + " | Issuer: " + this.certIssuer + " | Type: " + this.certType + " | Description: " + this.certDescription + " ||| ";
+    @Override
+    public String toString() {
+        return "Cert{" +
+                "id=" + id +
+                ", certExpiration='" + certExpiration + '\'' +
+                ", certIssuer='" + certIssuer + '\'' +
+                ", certType='" + certType + '\'' +
+                ", certDescription='" + certDescription + '\'' +
+                ", certCode='" + certCode + '\'' +
+                ", certLength='" + certLength + '\'' +
+                ", isExpired=" + isExpired +
+                ", user=" + user +
+                '}';
     }
 }

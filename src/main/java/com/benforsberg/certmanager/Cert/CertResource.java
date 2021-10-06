@@ -14,9 +14,9 @@ import java.util.Optional;
 @RestController
 public class CertResource {
 
-    private List<Cert> CertsList = new ArrayList<Cert>();
+    //private List<Cert> CertsList = new ArrayList<Cert>();
     @Autowired
-    private CertRepository certRepository;
+    CertRepository certRepository;
 
     @GetMapping("/certs")
     public List<Cert> retrieveAllCerts() {

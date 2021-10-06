@@ -1,64 +1,39 @@
 package com.benforsberg.certmanager.User;
 
-import com.benforsberg.certmanager.Cert.Cert;
-import com.benforsberg.certmanager.CertRegistration.CertRegistration;
-import com.benforsberg.certmanager.CertRegistration.UserCertJoinTable;
+import com.benforsberg.certmanager.Cert.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
-public class User {
+@Table(name = "users")
+public class User implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
     private String firstName;
     private String lastName;
-    private String tags;
-    private String phoneNum;
-    private String pin;
+    private String email;
+    private boolean isAdmin;
 
-    @ManyToMany
-    @JoinTable(name="user_certs",joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = " cert_id"))
-    Set<Cert> userCerts;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private Set<Cert> certs;
 
-    @OneToMany(mappedBy = "user")
-    Set<CertRegistration> certRegistrations;
-
-    @OneToMany(mappedBy = "user")
-    Set<UserCertJoinTable> userCertJoinTables;
-
-
-    public Set<Cert> getUserCerts() {
-        return userCerts;
-    }
-
-    public void addUserCert(Cert cert) {
-        userCerts.add(cert);
-    }
-
-    public void deleteUserCert(Cert cert) {
-        userCerts.remove(cert);
-    }
-
-    public void setUserCerts(Set<Cert> userCerts) {
-        this.userCerts = userCerts;
-    }
 
     public User() {
-        super();
+        this.firstName = "John";
+        this.lastName = "Doe";
+        this.email = "john@doe.com";
+        this.isAdmin = false;
     }
 
-    public User( String firstName, String lastName, String tags, String phoneNum, String pin) {
+    public User(String firstName, String lastName, String email, boolean isAdmin) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.tags = tags;
-        this.phoneNum = phoneNum;
-        this.pin = pin;
-    }
-
-    public Set<Cert> printAllUserCerts(){
-        return this.userCerts;
+        this.email = email;
+        this.isAdmin = isAdmin;
     }
 
 
@@ -86,27 +61,32 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getTags() {
-        return tags;
+    public String getEmail() {
+        return email;
     }
 
-    public void setTags(String tags) {
-        this.tags = tags;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getPhoneNum() {
-        return phoneNum;
+    public boolean isAdmin() {
+        return isAdmin;
     }
 
-    public void setPhoneNum(String phoneNum) {
-        this.phoneNum = phoneNum;
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
-    public String getPin() {
-        return pin;
-    }
-
-    public void setPin(String pin) {
-        this.pin = pin;
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", isAdmin=" + isAdmin +
+                ", certs=" + certs +
+                '}';
     }
 }
+
