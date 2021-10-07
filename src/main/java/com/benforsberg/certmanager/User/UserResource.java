@@ -31,21 +31,44 @@ public class UserResource {
     public String greeting() {
         return "<center><h1>Hello! Welcome to Ben's spring boot application!</h1></center>";
     }
-    @GetMapping("/home")
+
+
+    @GetMapping({"/dashboard", "/dashboard/"})
     public String greetingHome() {
-        return greeting  + retrieveAllUsers().get(0).getFirstName() +  " " + retrieveAllUsers().get(0).getLastName() + "!";
+        //Track num users and num certs in system.
+        int numUsers = userRepository.findAll().size();
+        int numCerts = 0;
+        for (int i = 0; i < numUsers; i++) {
+            numCerts += userRepository.findAll().get(i).getCerts().size();
+        }
+
+        String output = "";
+        output = "There are currently " + numUsers + " users and " + numCerts + " tracked certifications in the system.";
+        return output;
     }
 
-    @GetMapping("/private")
-    public String privateMessage() {
-        return "Heyyy you're on a private page!";
+    //Mapp multiple endpoints to one method
+    @GetMapping({"/home/{id}", "/dashboard/{id}"})
+    public String greetingHomeUser(@PathVariable long id) {
+        String output = "";
+
+
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()) {
+            throw new UserNotFoundException("No user found with that ID.");
+        }
+        boolean isAdmin = user.get().getIsAdmin();
+        output = "Welcome " + user.get().getFirstName() + " " + user.get().getLastName() + "!" + "\nYou currently have " + user.get().getCerts().size();
+
+        if (user.get().getCerts().size() == 1)
+            output = output + " cert saved.";
+        else output = output + " certs saved.";
+
+        if (isAdmin)
+            output = output + "\nYou are currently logged in as an admin.";
+        else output = output + "\nYou are currently logged in as a standard user.";
+        return output;
     }
-
-
-    public String printUserCerts(User user){
-        return user.getFirstName() + " " + user.getLastName() + "'s certs: " + "\n";
-    }
-
 
     @GetMapping("/users")
     public List<User> retrieveAllUsers() {
@@ -62,17 +85,6 @@ public class UserResource {
 
         return user.get();
     }
-
-//    //Get certs for a user
-//    @GetMapping("/users/{id}/certs")
-//    public Set<Cert> retrieveUserCerts(@PathVariable long id) {
-//        Optional<User> user = userRepository.findById(id);
-//        Set<Cert> certs = user.get().getCerts();
-//        if (!user.isPresent())
-//            throw new UserNotFoundException("id-" + id);
-//
-//        return certs;
-//    }
 
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable long id) {
