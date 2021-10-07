@@ -10,5 +10,7 @@ import java.util.List;
 public interface CertRepository extends JpaRepository<Cert, Long> {
     List<Cert> findByCertCode(String certCode);
 
+    List<Cert> findByUser(User user);
+
     List<Cert> findByIsExpired(boolean isExpired);
 }

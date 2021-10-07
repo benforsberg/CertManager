@@ -51,9 +51,14 @@ public class UserResource {
     @GetMapping({"/home/{id}", "/dashboard/{id}"})
     public String greetingHomeUser(@PathVariable long id) {
         String output = "";
+
+
         Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()) {
+            throw new UserNotFoundException("No user found with that ID.");
+        }
         boolean isAdmin = user.get().getIsAdmin();
-        output = "Welcome " + user.get().getFirstName() + " " + user.get().getLastName() + "! You currently have " + user.get().getCerts().size();
+        output = "Welcome " + user.get().getFirstName() + " " + user.get().getLastName() + "!" + "\nYou currently have " + user.get().getCerts().size();
 
         if (user.get().getCerts().size() == 1)
             output = output + " cert saved.";
@@ -64,17 +69,6 @@ public class UserResource {
         else output = output + "\nYou are currently logged in as a standard user.";
         return output;
     }
-
-    @GetMapping("/private")
-    public String privateMessage() {
-        return "Heyyy you're on a private page!";
-    }
-
-
-    public String printUserCerts(User user) {
-        return user.getFirstName() + " " + user.getLastName() + "'s certs: " + "\n";
-    }
-
 
     @GetMapping("/users")
     public List<User> retrieveAllUsers() {
@@ -91,17 +85,6 @@ public class UserResource {
 
         return user.get();
     }
-
-//    //Get certs for a user
-//    @GetMapping("/users/{id}/certs")
-//    public Set<Cert> retrieveUserCerts(@PathVariable long id) {
-//        Optional<User> user = userRepository.findById(id);
-//        Set<Cert> certs = user.get().getCerts();
-//        if (!user.isPresent())
-//            throw new UserNotFoundException("id-" + id);
-//
-//        return certs;
-//    }
 
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable long id) {

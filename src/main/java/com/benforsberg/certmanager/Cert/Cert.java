@@ -38,13 +38,6 @@ public class Cert implements Serializable {
     }
 
     public Cert() {
-        this.certExpiration = "October 12, 2021";
-        this.certIssuer = "American Red Cross";
-        this.certType = "Instructor";
-        this.certDescription = "Lifeguard Instructor";
-        this.certCode = "GT4FB3";
-        this.certLength = "2 Years";
-        this.isExpired = false;
     }
 
     public Long getId() {
@@ -103,7 +96,7 @@ public class Cert implements Serializable {
         this.certLength = certLength;
     }
 
-    public boolean isIsExpired() {
+    public boolean getIsExpired() {
         return isExpired;
     }
 
@@ -111,6 +104,9 @@ public class Cert implements Serializable {
         this.isExpired = isExpired;
     }
 
+    public Long getOwnerID() {
+        return user.getId();
+    }
 
     @Override
     public String toString() {

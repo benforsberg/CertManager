@@ -22,7 +22,6 @@ public class User implements Serializable {
             cascade = CascadeType.ALL)
     private Set<Cert> certs;
 
-//Set<Cert> certs
     public User() {
         //this.certs = certs;
         this.firstName = "John";
