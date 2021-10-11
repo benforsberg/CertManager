@@ -62,6 +62,14 @@ public class CertResource {
         return certs;
     }
 
+    @GetMapping("/certs/{id}/status")
+    public boolean retrieveCertExpirationStatus(@PathVariable String id) {
+        List<Cert> certs = certRepository.findByCertCode(id);
+        Cert cert = certs.get(0);
+        boolean isExpired = cert.getIsExpired();
+        return isExpired;
+    }
+
 
     @DeleteMapping("/certs/{id}")
     public void deleteCert(@PathVariable long id) {
