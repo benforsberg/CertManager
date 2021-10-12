@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.benforsberg.certmanager.Cert.Cert;
 import com.benforsberg.certmanager.Cert.CertRepository;
+import com.benforsberg.certmanager.Cert.CertResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +26,8 @@ public class UserResource {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    CertRepository certRepository;
 
 
     @GetMapping("/")
@@ -67,6 +70,8 @@ public class UserResource {
         if (isAdmin)
             output = output + "\nYou are currently logged in as an admin.";
         else output = output + "\nYou are currently logged in as a standard user.";
+
+
         return output;
     }
 
