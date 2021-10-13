@@ -2,9 +2,13 @@ package com.benforsberg.certmanager.Cert;
 
 
 import com.benforsberg.certmanager.User.User;
+import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "certs")
@@ -20,20 +24,22 @@ public class Cert implements Serializable {
     private String certDescription;
     private String certCode;
     private String certLength;
+    public int daysUntilExpired;
     private boolean isExpired;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Cert(String certExpiration, String certIssuer, String certType, String certDescription, String certCode, String certLength, boolean isExpired, User user) {
+    public Cert(String certExpiration, String certIssuer, String certType, String certDescription, String certCode, String certLength, User user) {
         this.certExpiration = certExpiration;
         this.certIssuer = certIssuer;
         this.certType = certType;
         this.certDescription = certDescription;
         this.certCode = certCode;
         this.certLength = certLength;
-        this.isExpired = isExpired;
+        this.isExpired = calcIsCertExpired(parseDateFromString(certExpiration));//isExpired;
+        this.daysUntilExpired = calcDaysUntilExpired(parseDateFromString(certExpiration));
         this.user = user;
     }
 
@@ -108,6 +114,40 @@ public class Cert implements Serializable {
         return user.getId();
     }
 
+    public int getDaysUntilExpired() {
+        return calcDaysUntilExpired(parseDateFromString(certExpiration));
+    }
+
+    public void setDaysUntilExpired(int daysUntilExpired) {
+        this.daysUntilExpired = daysUntilExpired;
+    }
+
+    //Helper methods for cert
+    public LocalDate parseDateFromString(String certExpiration){
+        LocalDate expirationDate = LocalDate.parse(certExpiration);
+        return expirationDate;
+
+    }
+
+    public boolean calcIsCertExpired(LocalDate expirationDate){
+        LocalDate date = expirationDate;
+        LocalDate today = LocalDate.now();
+
+        if (date.isEqual(today) || date.isAfter(today))
+            return true;
+        else return false;
+
+    }
+
+    public int calcDaysUntilExpired(LocalDate expirationDate){
+        LocalDate today = LocalDate.now();
+
+        long daysUntilExpires = ChronoUnit.DAYS.between(today, expirationDate);
+
+        return (int)daysUntilExpires;
+
+    }
+
     @Override
     public String toString() {
         return "Cert{" +
@@ -118,6 +158,7 @@ public class Cert implements Serializable {
                 ", certDescription='" + certDescription + '\'' +
                 ", certCode='" + certCode + '\'' +
                 ", certLength='" + certLength + '\'' +
+                ", daysUntilExpired=" + daysUntilExpired +
                 ", isExpired=" + isExpired +
                 ", user=" + user +
                 '}';
