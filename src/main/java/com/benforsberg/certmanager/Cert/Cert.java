@@ -130,12 +130,16 @@ public class Cert implements Serializable {
     }
 
     public boolean calcIsCertExpired(LocalDate expirationDate){
-        LocalDate date = expirationDate;
-        LocalDate today = LocalDate.now();
+//        LocalDate date = expirationDate;
+//        LocalDate today = LocalDate.now();
+//
+//        if (date.isBefore(today) || date.isEqual(today))
+//            return true;
 
-        if (date.isEqual(today) || date.isAfter(today))
+        int days = calcDaysUntilExpired(expirationDate);
+        if (days <= 0) {
             return true;
-        else return false;
+        } else return false;
 
     }
 

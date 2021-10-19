@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.*;
 
+@CrossOrigin()//origins = "http://localhost:8080"
 @RestController
 public class CertResource {
 
@@ -18,6 +19,7 @@ public class CertResource {
     CertRepository certRepository;
     @Autowired
     UserRepository userRepository;
+
 
     @GetMapping("/certs")
     public List<Cert> retrieveAllCerts() {
@@ -35,6 +37,11 @@ public class CertResource {
             int days = cert.calcDaysUntilExpired(cert.parseDateFromString(cert.getCertExpiration()));
             cert.setDaysUntilExpired(days);
             cert.setIsExpired(expired);
+
+            Optional<Cert> realCert = certRepository.findById(cert.getId());
+            realCert.get().setDaysUntilExpired(days);
+            realCert.get().setIsExpired(expired);
+            certRepository.save(realCert.get());
         }
         return certs;
     }
@@ -45,6 +52,12 @@ public class CertResource {
         int days = cert.calcDaysUntilExpired(cert.parseDateFromString(cert.getCertExpiration()));
         cert.setDaysUntilExpired(days);
         cert.setIsExpired(expired);
+
+        Optional<Cert> realCert = certRepository.findById(cert.getId());
+        realCert.get().setDaysUntilExpired(days);
+        realCert.get().setIsExpired(expired);
+        certRepository.save(realCert.get());
+
         return cert;
     }
 
