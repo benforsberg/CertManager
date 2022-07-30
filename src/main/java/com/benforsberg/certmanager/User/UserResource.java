@@ -8,6 +8,7 @@ import java.util.Set;
 import com.benforsberg.certmanager.Cert.Cert;
 import com.benforsberg.certmanager.Cert.CertRepository;
 import com.benforsberg.certmanager.Cert.CertResource;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,18 +18,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 public class UserResource {
 
-
     @Autowired
     UserRepository userRepository;
     @Autowired
     CertRepository certRepository;
 
-
     @GetMapping("/")
     public String greeting() {
         return "<center><h1>Hello! Welcome to Ben's spring boot application!</h1></center>";
     }
-
 
     @GetMapping({"/dashboard", "/dashboard/"})
     public String greetingHome() {
@@ -75,6 +73,7 @@ public class UserResource {
 
     }
 
+    //@Api(value = "UserResource", description = "Rest APIs related to users!")
     @GetMapping("/users")
     public List<User> retrieveAllUsers() {
         return userRepository.findAll();
