@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.*;
 
+@CrossOrigin()//origins = "http://localhost:8080"
 @RestController
 public class CertResource {
 
@@ -19,10 +20,47 @@ public class CertResource {
     @Autowired
     UserRepository userRepository;
 
+
     @GetMapping("/certs")
     public List<Cert> retrieveAllCerts() {
-        return certRepository.findAll();
+        List<Cert> certs = certRepository.findAll();
+        refreshManyCertData(certs);
+
+        return certs;
     }
+
+    // Helper method to update cert expiration info
+    public List<Cert> refreshManyCertData(List<Cert> certs) {
+        for (int i = 0; i < certs.size(); i++) {
+            Cert cert = certs.get(i);
+            boolean expired = cert.calcIsCertExpired(cert.parseDateFromString(cert.getCertExpiration()));
+            int days = cert.calcDaysUntilExpired(cert.parseDateFromString(cert.getCertExpiration()));
+            cert.setDaysUntilExpired(days);
+            cert.setIsExpired(expired);
+
+            Optional<Cert> realCert = certRepository.findById(cert.getId());
+            realCert.get().setDaysUntilExpired(days);
+            realCert.get().setIsExpired(expired);
+            certRepository.save(realCert.get());
+        }
+        return certs;
+    }
+
+    // Helper method to update cert expiration info
+    public Cert refreshSingleCertData(Cert cert) {
+        boolean expired = cert.calcIsCertExpired(cert.parseDateFromString(cert.getCertExpiration()));
+        int days = cert.calcDaysUntilExpired(cert.parseDateFromString(cert.getCertExpiration()));
+        cert.setDaysUntilExpired(days);
+        cert.setIsExpired(expired);
+
+        Optional<Cert> realCert = certRepository.findById(cert.getId());
+        realCert.get().setDaysUntilExpired(days);
+        realCert.get().setIsExpired(expired);
+        certRepository.save(realCert.get());
+
+        return cert;
+    }
+
 
     //Retrieve a specific cert given its ID
     @GetMapping("/certs/{id}")
@@ -32,6 +70,8 @@ public class CertResource {
         if (!cert.isPresent())
             throw new CertNotFoundException("id-" + id);
 
+        refreshSingleCertData(cert.get());
+
         return cert.get();
     }
 
@@ -39,6 +79,10 @@ public class CertResource {
     @GetMapping("/lookup/{id}")
     public Cert retrieveCertByCode(@PathVariable String id) {
         List<Cert> certs = certRepository.findByCertCode(id.toUpperCase());
+        refreshSingleCertData(certs.get(0));
+        if (certs.size() == 0) {
+            throw new CertNotFoundException("Cert not found with that ID.");
+        }
         return certs.get(0);
     }
 
@@ -59,6 +103,9 @@ public class CertResource {
         System.out.println("Found user " + user.get().getFirstName() + " " + user.get().getLastName());
         Set<Cert> certs = user.get().getCerts();
 
+        for (Cert c : certs)
+            refreshSingleCertData(c);
+
         return certs;
     }
 
@@ -66,8 +113,8 @@ public class CertResource {
     public boolean retrieveCertExpirationStatus(@PathVariable String id) {
         List<Cert> certs = certRepository.findByCertCode(id);
         Cert cert = certs.get(0);
-        boolean isExpired = cert.getIsExpired();
-        return isExpired;
+        refreshSingleCertData(cert);
+        return cert.getIsExpired();
     }
 
 
@@ -76,8 +123,12 @@ public class CertResource {
         certRepository.deleteById(id);
     }
 
+
+    // In frontend, chooise user via dropdown and then include user id as part of cert object
     @PostMapping("/certs")
     public ResponseEntity<Object> createCert(@RequestBody Cert cert) {
+
+        refreshSingleCertData(cert);
         Cert savedCert = certRepository.save(cert);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -97,6 +148,7 @@ public class CertResource {
 
         cert.setId(id);
 
+        refreshSingleCertData(cert);
         certRepository.save(cert);
 
         return ResponseEntity.noContent().build();
